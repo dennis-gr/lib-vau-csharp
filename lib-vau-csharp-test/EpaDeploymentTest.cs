@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 using lib_vau_csharp;
@@ -43,7 +45,7 @@ namespace lib_vau_csharp_test
         public void Setup()
         {
             vauClientStateMachine = new VauClientStateMachine();
-            KEM.initializeKEM(KEM.KEMEngines.AesEngine, KEM.KEYSIZE_256);
+            Kem.initializeKem(Kem.KemEngines.AesEngine, Kem.KEYSIZE_256);
         }
 
         [Test]
@@ -77,7 +79,11 @@ namespace lib_vau_csharp_test
             if (response?.Headers?.TryGetValues(HEADER_VAU_CID, out cidHeader) ?? false)
             {
                 string[] vecStr = (string[])cidHeader;
+                #if (NET8_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER)
+                epaCID = vecStr[0].StartsWith('/') ? vecStr[0].Remove(0, 1) : vecStr[0];
+                #else
                 epaCID = vecStr[0].StartsWith("/") ? vecStr[0].Remove(0, 1) : vecStr[0];
+                #endif
             }
         }
 
