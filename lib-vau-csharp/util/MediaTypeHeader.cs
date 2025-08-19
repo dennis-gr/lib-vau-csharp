@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright 2024 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-using System;
+using System.Net.Http.Headers;
+using System.Net.Mime;
 
-namespace lib_vau_csharp.data
+namespace lib_vau_csharp.util
 {
-    public class ConnectionId
+    internal static class MediaTypeHeader
     {
-        public string Cid { get; }
-        public ConnectionId(string cid)
-        {
-            Cid = cid;
-        }
-
-        public static ConnectionId CreateRandom()
-        {
-            return new ConnectionId((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond).ToString());
-        }
-
-        public override string ToString() => Cid;
+        public static readonly MediaTypeWithQualityHeaderValue Cbor = new MediaTypeWithQualityHeaderValue("application/cbor");
+        public static readonly MediaTypeWithQualityHeaderValue Octet = new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Octet);
     }
 }

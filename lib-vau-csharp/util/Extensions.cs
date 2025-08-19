@@ -1,6 +1,4 @@
-﻿/*
- * Copyright 2024 gematik GmbH
- *
+/*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,22 +13,20 @@
  */
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 
-namespace lib_vau_csharp.data
+namespace lib_vau_csharp.util
 {
-    public class ConnectionId
+    internal static class Extensions
     {
-        public string Cid { get; }
-        public ConnectionId(string cid)
+        internal static IEnumerable<string> ReadLines(this string text)
         {
-            Cid = cid;
+            var reader = new StringReader(text ?? String.Empty);
+            while (reader.ReadLine() is { } line)
+            {
+                yield return line;
+            }
         }
-
-        public static ConnectionId CreateRandom()
-        {
-            return new ConnectionId((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond).ToString());
-        }
-
-        public override string ToString() => Cid;
     }
 }
