@@ -12,27 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 using lib_vau_csharp;
 using lib_vau_csharp.data;
 
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 using System;
-using System.Text;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace lib_vau_csharp_test
 {
     public class HandshakeTests
     {
-        private static VauServer vauServer;
-        private static VauClient vauClient;
-        private static string url = "http://localhost:8080/";
+        private VauServer vauServer;
+        private string url = "http://localhost:8080/";
 
         [SetUp]
         public void Setup()
@@ -42,11 +38,10 @@ namespace lib_vau_csharp_test
 
             vauServer = new VauServer(url, signedPublicVauKeys, Constants.Keys.EccKyberKeyPair);
             vauServer.StartAsync();
-
         }
 
         [TearDown]
-        public static void ShutdownServer()
+        public void ShutdownServer()
         {
             if (vauServer != null)
             {
@@ -55,14 +50,15 @@ namespace lib_vau_csharp_test
         }
 
         [Test]
-        public static void TestSendingMessagesThroughChannel()
+        public async Task TestSendingMessagesThroughChannel()
         {
-            vauClient = new VauClient();
-            bool handshakeSucceeded = vauClient.DoHandshake(url).Result;
+            var httpClient = new HttpClient { BaseAddress = new Uri(url) };
+            var vauClient = new VauClient(httpClient);
+            await vauClient.DoHandshake();
 
-            ClassicAssert.IsTrue(handshakeSucceeded);
-            bool messagesExchanged = vauClient.SendMessage(url, Encoding.UTF8.GetBytes("Hello World!")).Result;
-            ClassicAssert.IsTrue(messagesExchanged);
+            var replyMessage = await vauClient.SendMessage("Hello World!"u8.ToArray());
+            Assert.That(replyMessage.Content, Is.Not.Null);
+            Console.WriteLine(await replyMessage.Content.ReadAsStringAsync());
         }
     }
 }
