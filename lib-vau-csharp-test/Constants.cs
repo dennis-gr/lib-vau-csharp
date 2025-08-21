@@ -16,6 +16,11 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
+using System;
+using System.IO;
+
+using lib_vau_csharp_test.util;
+
 using lib_vau_csharp.data;
 using lib_vau_csharp_test.util;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -26,6 +31,8 @@ namespace lib_vau_csharp_test
 {
     public static class Constants
     {
+        public static Uri EpaDeploymentUrl = new Uri("http://localhost:443/");
+        
         public static class Keys
         {
             public static readonly EccKyberKeyPair EccKyberKeyPair = FileUtil.ReadEccKyberKeyPairFromFile(Paths.VauServerKeys);
