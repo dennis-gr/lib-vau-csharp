@@ -57,7 +57,7 @@ namespace lib_vau_csharp_test
         }
 
         [Test]
-        public void UsageWitIHttpClientFactory()
+        public void UsageWithIHttpClientFactory()
         {
             var services = new ServiceCollection();
             services.AddTransient<VauHttpClientHandler>();
