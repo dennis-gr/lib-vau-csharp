@@ -13,9 +13,12 @@
  */
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 
 using lib_vau_csharp.util;
 
@@ -26,6 +29,8 @@ namespace lib_vau_csharp
         private const int StatusCodeIndex = 1;
         private const int ReasonPhraseIndex = 2;
 
+        private const int CrLfLength = 2;
+
         private static readonly char[] HeaderSplit = [':'];
 
         /// <summary>
@@ -34,54 +39,70 @@ namespace lib_vau_csharp
         /// <param name="decryptedResponse"></param>
         /// <param name="httpResponseMessage"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public static void Parse(string decryptedResponse, HttpResponseMessage httpResponseMessage)
+        public static void Parse(byte[] decryptedResponse, HttpResponseMessage httpResponseMessage)
         {
             if (decryptedResponse == null)
                 throw new ArgumentNullException(nameof(decryptedResponse));
             if (httpResponseMessage == null)
                 throw new ArgumentNullException(nameof(httpResponseMessage));
 
-            var lines = decryptedResponse.ReadLines().ToList();
+            using var memoryStream = new MemoryStream(decryptedResponse);
+            using var reader = new StreamReader(memoryStream);
 
-            int contentIndex = 0;
+            int bytesRead = 0; //Keep track of the number of bytes read from the stream to read the content later, since not all responses contain a 'Content-Length-ä header which we could use otherwise 
+            int i = 0;
 
-            for (int i = 0; i < lines.Count; i++)
+            var contentHeaders = new Dictionary<string, string>();
+
+            while (bytesRead < memoryStream.Length)
             {
-                string line = lines[i];
-                if (i == 0)
+                string line = reader.ReadLine();
+                bytesRead += Encoding.UTF8.GetByteCount(line) + CrLfLength;
+
+                if (i++ == 0)
                 {
                     if (line.StartsWith("HTTP"))
                     {
-                        string[] status = lines[0].Split(' ');
+                        string[] status = line.Split(' ');
                         if (Enum.TryParse(status[StatusCodeIndex], true, out HttpStatusCode statusCode))
                             httpResponseMessage.StatusCode = statusCode;
 
-                        httpResponseMessage.ReasonPhrase = status[ReasonPhraseIndex];   
+                        httpResponseMessage.ReasonPhrase = status[ReasonPhraseIndex];
+                        continue;
                     }
-                    else
-                    {
-                        //Not sure if we can get here in a production env, the TestSendingMessagesThroughChannel test expects this work though 
-                        break;
-                    }
+
+                    //Not sure if we can get here in a production env, the TestSendingMessagesThroughChannel test expects this work though 
+                    break;
                 }
 
                 if (String.IsNullOrWhiteSpace(line))
                 {
-                    contentIndex = i + 1;
                     break;
                 }
 
                 string[] headerNameValue = line.Split(HeaderSplit, 2);
                 string name = headerNameValue[0].Trim();
 
-                if (HttpResponseHeaderNames.All.Contains(name))
+                if (HttpResponseHeaderNames.IsContentHeader(name))
+                {
+                    contentHeaders.Add(name, headerNameValue[1].Trim());
+                }
+                else if (HttpResponseHeaderNames.All.Contains(name))
                 {
                     string value = headerNameValue[1].Trim();
                     httpResponseMessage.Headers.Add(name, value);
                 }
             }
 
-            httpResponseMessage.Content = contentIndex < lines.Count ? new StringContent(String.Join(String.Empty, lines.Skip(contentIndex))) : null;
+            long contentSize = memoryStream.Length - bytesRead;
+            if (contentSize <= 0)
+                return;
+
+            httpResponseMessage.Content = new ByteArrayContent(decryptedResponse, bytesRead, (int)contentSize);
+            foreach (var contentHeader in contentHeaders)
+            {
+                httpResponseMessage.Content.Headers.Add(contentHeader.Key, contentHeader.Value.Trim());
+            }
         }
     }
 }

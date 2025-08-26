@@ -3,6 +3,7 @@
  * Licensed under CC BY-SA 3.0: https://creativecommons.org/licenses/by-sa/3.0/
  */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +14,9 @@ namespace lib_vau_csharp.util
     /// </summary>
     internal static class HttpResponseHeaderNames
     {
-        public static readonly HashSet<string> All = new HashSet<string>(typeof(HttpResponseHeaderNames).GetFields().Select(p => p.Name));
+        public static readonly HashSet<string> All = new HashSet<string>(typeof(HttpResponseHeaderNames).GetFields().Select(p => p.GetValue(null) as string));
+        
+        public static bool IsContentHeader(string headerName) => headerName.StartsWith("Content", StringComparison.OrdinalIgnoreCase);
 
         ///<summary>What partial content range types this server supports</summary>
         public const string AcceptRanges = "Accept-Ranges";
