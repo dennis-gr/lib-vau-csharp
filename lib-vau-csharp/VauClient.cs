@@ -43,6 +43,12 @@ namespace lib_vau_csharp
         public ConnectionId ConnectionId { get; private set; }
 
         /// <summary>
+        /// Gets or sets a value to enable/disable adding a header containing the keys used to encrypt/decrypt to messages send to the VAU.
+        /// </summary>
+        /// <see href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/gemSpec_Krypt_V2.29.0/#A_24477"/>
+        public bool EnableNonPUTracing { get; set; }
+
+        /// <summary>
         /// Create a new instance of the <see cref="VauClient"/> class.
         /// </summary>
         /// <param name="httpClient">A <see cref="HttpClient"/> that is configured to communicate with a record system, i.e. has the proper base address set.</param>
@@ -92,6 +98,8 @@ namespace lib_vau_csharp
             byte[] cborEncodedMessage = vauClientStateMachine.EncryptVauMessage(message);
             using var content = new ByteArrayContent(cborEncodedMessage);
             content.Headers.ContentType = MediaTypeHeader.Octet;
+            AddTracingHeader(content);
+            
             var response = await httpClient.PostAsync(ConnectionId.Cid, content).ConfigureAwait(false);
             byte[] serverMessageEncoded = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             var decryptedResponse = vauClientStateMachine.DecryptVauMessage(serverMessageEncoded);
@@ -130,6 +138,7 @@ namespace lib_vau_csharp
 
             var content = new ByteArrayContent(cborEncodedMessage);
             content.Headers.ContentType = MediaTypeHeader.Octet;
+            AddTracingHeader(content);
 
             httpRequest.Headers.Accept.Add(MediaTypeHeader.Octet);
             httpRequest.Content = content;
@@ -191,6 +200,12 @@ namespace lib_vau_csharp
         {
             if (ConnectionId == null)
                 throw new InvalidOperationException($"No connection has been established, call {nameof(DoHandshake)} first.");
+        }
+        
+        private void AddTracingHeader(ByteArrayContent content)
+        {
+            if (EnableNonPUTracing)
+                content.Headers.Add("VAU-nonPU-Tracing", $"{Convert.ToBase64String(vauClientStateMachine.EncryptionVauKey)} {Convert.ToBase64String(vauClientStateMachine.DecryptionVauKey)}");
         }
     }
 

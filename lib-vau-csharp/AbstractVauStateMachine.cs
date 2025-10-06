@@ -39,8 +39,8 @@ namespace lib_vau_csharp
 
 
         public byte[] KeyId { get; protected set; }
-        protected byte[] encryptionVauKey { get; set; }
-        protected byte[] decryptionVauKey { get; set; }
+        public byte[] EncryptionVauKey { get; set; }
+        public byte[] DecryptionVauKey { get; set; }
         public bool isPu { get; set; } = false;
         protected abstract bool ValidateKeyId(byte[] keyId);
 
@@ -58,7 +58,7 @@ namespace lib_vau_csharp
             new SecureRandom().NextBytes(random);
 
             AesGcm aesGcm = new AesGcm();
-            aesGcm.initAESForEncryption(random, requestCounter, header, encryptionVauKey);
+            aesGcm.initAESForEncryption(random, requestCounter, header, EncryptionVauKey);
             byte[] ciphertext = aesGcm.encryptData(plaintext);
             byte[][] concatBytes = new byte[][] { header, aesGcm.ivValue, ciphertext };
             byte[] bytes = Arrays.ConcatenateAll(concatBytes);
@@ -102,7 +102,7 @@ namespace lib_vau_csharp
             try
             {
                 AesGcm aesGcm = new AesGcm();
-                aesGcm.initAESForDecryption(iv, header, decryptionVauKey);
+                aesGcm.initAESForDecryption(iv, header, DecryptionVauKey);
                 return aesGcm.decryptData(ct);
             }
             catch (Exception e)

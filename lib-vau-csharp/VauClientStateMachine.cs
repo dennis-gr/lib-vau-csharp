@@ -68,8 +68,8 @@ namespace lib_vau_csharp
             byte[] aeadCiphertextMessage3 = EncapsulateMessage(transferredSignedServerPublicKeyList);
 
             kdfClientKey2 = this.clientKemResult1.getKDFKey2(this.clientKemResult2);
-            this.encryptionVauKey = kdfClientKey2.ClientToServerAppData;
-            this.decryptionVauKey = kdfClientKey2.ServerToClientAppData;
+            EncryptionVauKey = kdfClientKey2.ClientToServerAppData;
+            DecryptionVauKey = kdfClientKey2.ServerToClientAppData;
             KeyId = kdfClientKey2.KeyId;
             byte[] vauMessage3Encoded = createMessage3(aeadCiphertextMessage3);
             clientTranscript = clientTranscript.Concat(vauMessage3Encoded).ToArray();

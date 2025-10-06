@@ -114,8 +114,8 @@ namespace lib_vau_csharp
             VauMessage3InnerLayer kemCertificates = VauMessage3InnerLayer.fromCbor(kemCertificatesEncoded);
             kemResult2 = Kem.DecapsulateMessages(kemCertificates, serverVauKeys);
             serverKey2 = kemResult1.getKDFKey2(kemResult2);
-            this.encryptionVauKey = serverKey2.ServerToClientAppData;
-            this.decryptionVauKey = serverKey2.ClientToServerAppData;
+            this.EncryptionVauKey = serverKey2.ServerToClientAppData;
+            this.DecryptionVauKey = serverKey2.ClientToServerAppData;
             KeyId = serverKey2.KeyId;
         }
 
