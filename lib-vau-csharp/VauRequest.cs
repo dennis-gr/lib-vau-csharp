@@ -23,7 +23,7 @@ namespace lib_vau_csharp
     {
         private const string CrLf = "\r\n";  
 
-        public const string Status = "GET /VAU-Status HTTP/1.1\r\nAccept: application / json\r\n\r\n";
+        public const string Status = "GET /VAU-Status HTTP/1.1\r\nAccept: application / json\r\nx-useragent: {0}\r\n\r\n";
 
         /// <summary>
         /// Creates the inner http request to send to the VAU from the provided <paramref name="httpRequestMessage"/>.  

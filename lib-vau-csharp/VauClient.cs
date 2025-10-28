@@ -79,11 +79,11 @@ namespace lib_vau_csharp
         /// <returns>An instance of <see cref="VauStatus"/>.</returns>
         /// <exception cref="InvalidOperationException">Thrown in case the current instance is not connected to a VAU.</exception>
         /// <exception cref="HttpRequestException"></exception>
-        public async Task<VauStatus> GetStatus()
+        public async Task<VauStatus> GetStatus(string useragent)
         {
             EnsureConnected();
 
-            using var response = await SendMessage(Encoding.UTF8.GetBytes(VauRequest.Status)).ConfigureAwait(false);
+            using var response = await SendMessage(Encoding.UTF8.GetBytes(String.Format(VauRequest.Status, useragent))).ConfigureAwait(false);
             using var stream = await response.EnsureSuccessStatusCode().Content.ReadAsStreamAsync();
             return JsonSerializer.Deserialize<VauStatus>(stream, JsonSerializerOptions);
         }

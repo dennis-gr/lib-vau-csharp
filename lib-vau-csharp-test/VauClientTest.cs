@@ -49,7 +49,7 @@ namespace lib_vau_csharp_test
         public async Task CanGetStatus()
         {
             await vauClient.DoHandshake();
-            var vauStatus = await vauClient.GetStatus();
+            var vauStatus = await vauClient.GetStatus("Test/1.0");
 
             Assert.That(vauStatus, Is.Not.Null);
         }
@@ -114,7 +114,7 @@ namespace lib_vau_csharp_test
 
             yield return new TestCaseData(() => client.DecryptResponse(new HttpResponseMessage()), nameof(client.DecryptResponse));
             yield return new TestCaseData(() => client.EncryptRequest(new HttpRequestMessage { RequestUri = new Uri("https://example.com") }), nameof(client.EncryptRequest));
-            yield return new TestCaseData(() => client.GetStatus(), nameof(client.GetStatus));
+            yield return new TestCaseData(() => client.GetStatus("Test/1.0"), nameof(client.GetStatus));
             yield return new TestCaseData(() => client.SendMessage([]), nameof(client.SendMessage));
         }
 
