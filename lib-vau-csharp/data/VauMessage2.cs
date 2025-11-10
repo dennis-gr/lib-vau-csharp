@@ -37,7 +37,7 @@ namespace lib_vau_csharp.data
             this.AeadCt = aeadCt;
         }
 
-        public static CBORObject toCBOR(VauMessage2 message2 )
+        public static CBORObject toCBOR(VauMessage2 message2)
         {
             return CBORObject.NewMap()
                 .Add("MessageType", MessageType)

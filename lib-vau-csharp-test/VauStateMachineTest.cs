@@ -20,8 +20,8 @@ using lib_vau_csharp;
 using lib_vau_csharp.data;
 
 using NUnit.Framework;
-
 using System;
+using System.Linq;
 
 namespace lib_vau_csharp_test
 {
@@ -42,7 +42,8 @@ namespace lib_vau_csharp_test
             VauClientStateMachine client;
             VauServerStateMachine server;
 
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() =>
+            {
                 client = new VauClientStateMachine();
                 server = new VauServerStateMachine(signedPublicVauKeys, Constants.Keys.EccKyberKeyPair);
 
@@ -51,6 +52,29 @@ namespace lib_vau_csharp_test
                 byte[] pMessage3 = client.receiveMessage2(pMessage2);
                 byte[] pMessage4 = server.receiveMessage3(pMessage3);
                 client.receiveMessage4(pMessage4);
+
+                int messageCount = 3;
+                long before = client.RequestCounter;
+                for (int i = 0; i < messageCount; i++)
+                {
+                    // Client encrypts request
+                    byte[] request = System.Text.Encoding.UTF8.GetBytes($"Hello {i}");
+                    byte[] encryptedRequest = client.EncryptVauMessage(request);
+
+                    // Server decrypts request
+                    byte[] decryptedRequest = server.DecryptVauMessage(encryptedRequest);
+                    Assert.That(request.SequenceEqual(decryptedRequest), $"Decrypted request {i} should match original");
+
+                    // Server encrypts response
+                    byte[] response = System.Text.Encoding.UTF8.GetBytes($"Response {i}");
+                    byte[] encryptedResponse = server.EncryptVauMessage(response);
+
+                    // Client decrypts response
+                    byte[] decryptedResponse = client.DecryptVauMessage(encryptedResponse);
+                    Assert.That(response.SequenceEqual(decryptedResponse), $"Decrypted response {i} should match original");
+                }
+                long after = client.RequestCounter;
+                Assert.That((before + messageCount == after), $"Request counter should increment by {messageCount} after sending {messageCount} messages, but got {after}");
             });
         }
     }

@@ -21,7 +21,6 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using System;
 using System.Linq;
-using static Org.BouncyCastle.Asn1.Cmp.Challenge;
 
 namespace lib_vau_csharp.crypto
 {
@@ -78,7 +77,7 @@ namespace lib_vau_csharp.crypto
             m_encCipher.Init(true, aes_parameters);
             m_decCipher.Init(false, aes_parameters);
         }
-    
+
         private static byte[] initializeIV(byte[] random, long lCounter)
         {
             // A_24628 -> 32 Bit Random + 64 Bit Verschlüsselungszähler
@@ -89,7 +88,7 @@ namespace lib_vau_csharp.crypto
 
             byte[] counter = BitConverter.GetBytes(lCounter).Reverse().ToArray();   // A_24629, A_24631 -> 64 Bit encryption counter
             return random.Concat(counter).ToArray();                                // A_24628 -> concat random and counter
-        }        
+        }
 
         public byte[] encryptData(byte[] clearText)
         {

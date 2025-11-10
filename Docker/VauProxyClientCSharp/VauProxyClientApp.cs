@@ -17,7 +17,6 @@
  */
 
 using lib_vau_csharp.exceptions;
-using System;
 using vau_proxy_csharp;
 
 namespace VauProxyClientCSharp

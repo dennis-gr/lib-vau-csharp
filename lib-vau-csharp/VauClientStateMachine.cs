@@ -141,9 +141,18 @@ namespace lib_vau_csharp
                 throw new ArgumentException($"Invalid request counter. Expected {(this.requestCounter + 1)}, got {requestCounter}.");
             }
         }
+
+        /// <summary>
+        /// Increments the request counter (A_24628-*) and returns the new value.
+        /// </summary>
         protected override long GetRequestCounter()
         {
-            return requestCounter;
+            return requestCounter += 1;
         }
+
+        /// <summary>
+        /// Gets the current request counter value (e.g., for verification in unit tests).
+        /// </summary>
+        internal long RequestCounter => requestCounter;
     }
 }

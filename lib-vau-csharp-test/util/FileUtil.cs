@@ -61,7 +61,8 @@ namespace lib_vau_csharp_test.util
                     }
 
                     return new EccKyberKeyPair(ecdhKeyPair, kyberKeyPair);
-                };
+                }
+                ;
             }
             catch (Exception e)
             {

@@ -2,6 +2,19 @@
 
 # Release notes lib-vau-csharp for ePA 3.x and above
 
+## Release 1.0.9
+- Fixes
+  - Increase the request counter within ClientStateMachine when new requests are encrypted
+- Refactoring
+  - Remove unused using statements
+  - Remove code smells identified by sonarqube
+- Update dependencies
+  - nunit to Version="4.4.0"
+  - NUnit3TestAdapter to Version="5.2.0"
+  - Microsoft.NET.Test.Sdk to Version="18.0.0"
+  - Newtonsoft.Json to Version="13.0.4"
+  - System.Security.Permissions to Version="9.0.10"
+
 ## Release 1.0.8
 - Merge Pull Request of Github
   - Target .NET 8 and .NET Standard 2.0 #16

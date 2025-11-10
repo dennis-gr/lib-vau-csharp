@@ -17,11 +17,9 @@
  */
 
 using lib_vau_csharp;
-using lib_vau_csharp.crypto;
+using lib_vau_csharp.exceptions;
 using System.Net.Http.Headers;
 using System.Text;
-using lib_vau_csharp.util;
-using lib_vau_csharp.exceptions;
 
 namespace vau_proxy_csharp
 {
@@ -61,7 +59,7 @@ namespace vau_proxy_csharp
         public async Task<byte[]> DoHandShakeStage1(string baseUrl, HttpClient client)
         {
             try
-            { 
+            {
                 Console.WriteLine("Starting Handshake Stage 1...");
                 var message1Encoded = vauClientStateMachine.generateMessage1();
                 var content = new ByteArrayContent(message1Encoded);
@@ -71,7 +69,7 @@ namespace vau_proxy_csharp
                 if (response?.Headers?.TryGetValues("VAU-CID", out var cidHeader) ?? false)
                 {
                     Cid = cidHeader.ElementAt(0);
-                    if(Cid == null)
+                    if (Cid == null)
                     {
                         throw new VauProxyException("Cid Header was null.");
                     }
@@ -98,7 +96,7 @@ namespace vau_proxy_csharp
             var content2 = new ByteArrayContent(message3Encoded);
             content2.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/cbor");
 
-            var response2 = client.PostAsync(baseUrl + Cid.Remove(0,1), content2).Result;
+            var response2 = client.PostAsync(baseUrl + Cid.Remove(0, 1), content2).Result;
 
             byte[] message4Encoded = await response2.Content.ReadAsByteArrayAsync();
             vauClientStateMachine.receiveMessage4(message4Encoded);
