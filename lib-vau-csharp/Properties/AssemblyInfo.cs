@@ -1,5 +1,6 @@
-﻿/*
- * Copyright 2024 gematik GmbH
+
+/*
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +17,6 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
 
-namespace lib_vau_csharp.util
-{
-    public static class DigestUtils
-    {
-        public static byte[] Sha256(byte[] input)
-        {
-#if (NET8_0_OR_GREATER)
-            var sha = SHA256.HashData(input);
-            return sha;
-#else
-            var sha256 = SHA256.Create();
-            var sha = sha256.ComputeHash(input);
-            return sha;
-#endif
-        }
-    }
-}
+[assembly: InternalsVisibleTo("lib-vau-csharp-test")]

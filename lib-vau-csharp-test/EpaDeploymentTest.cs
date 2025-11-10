@@ -37,7 +37,7 @@ namespace lib_vau_csharp_test
         private VauClientStateMachine vauClientStateMachine;
 
         private static String GET_VAUSTATUS = "GET /VAU-Status HTTP/1.1\r\nAccept: application / json\r\n\r\n";
-        private static MediaTypeWithQualityHeaderValue cborType =  new MediaTypeWithQualityHeaderValue("application/cbor");
+        private static MediaTypeWithQualityHeaderValue cborType = new MediaTypeWithQualityHeaderValue("application/cbor");
         private static MediaTypeWithQualityHeaderValue octetType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
         private String epaCID = "";
 
@@ -48,7 +48,7 @@ namespace lib_vau_csharp_test
             Kem.initializeKem(Kem.KemEngines.AesEngine, Kem.KEYSIZE_256);
         }
 
-         // [Test]
+        // [Test]
         public async Task TestEpaDeployment()
         {
             await DoHandshake();
@@ -62,10 +62,11 @@ namespace lib_vau_csharp_test
 
             byte[] message3Encoded = vauClientStateMachine.receiveMessage2(message2Encoded);
             byte[] message4Encoded = await sendStreamAsPOST(epaUrl + epaCID, message3Encoded, cborType);
-            vauClientStateMachine.receiveMessage4(message4Encoded);    
+            vauClientStateMachine.receiveMessage4(message4Encoded);
         }
 
-        private async Task DoMessageTest() {
+        private async Task DoMessageTest()
+        {
             byte[] encrypted = vauClientStateMachine.EncryptVauMessage(Encoding.ASCII.GetBytes(GET_VAUSTATUS));
             byte[] message5Encoded = await sendStreamAsPOST(epaUrl + epaCID, encrypted, octetType);
             byte[] pDecodedMessage = vauClientStateMachine.DecryptVauMessage(message5Encoded);

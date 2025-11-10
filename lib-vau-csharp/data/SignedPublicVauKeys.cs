@@ -51,14 +51,14 @@ namespace lib_vau_csharp.data
         {
             byte[] encodedServerKeys = VauPublicKeys.toCBOR(vauServerKeys).EncodeToBytes();
 
-            #if (NET8_0_OR_GREATER)
+#if (NET8_0_OR_GREATER)
             return new SignedPublicVauKeys(encodedServerKeys,
                 GenerateEccSignature(encodedServerKeys, eCPrivateKeyParameters),
                 SHA256.HashData(serverAutCertificate),
                 cdv,
                 ocspResponseAutCertificate
                 );
-            #else
+#else
             return new SignedPublicVauKeys(
                 encodedServerKeys,
                 GenerateEccSignature(encodedServerKeys, eCPrivateKeyParameters),
@@ -66,7 +66,7 @@ namespace lib_vau_csharp.data
                 cdv,
                 ocspResponseAutCertificate
                 );
-            #endif
+#endif
         }
 
         private static byte[] GenerateEccSignature(byte[] tbsData, ECPrivateKeyParameters privateKey)

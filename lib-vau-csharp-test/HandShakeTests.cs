@@ -24,7 +24,6 @@ using NUnit.Framework.Legacy;
 
 using System;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace lib_vau_csharp_test
 {
@@ -32,7 +31,18 @@ namespace lib_vau_csharp_test
     {
         private static VauServer vauServer;
         private static VauClient vauClient;
-        private static string url = "http://localhost:8080/";
+        private static int freePort = GetFreePort();
+        private static string url = $"http://localhost:{freePort}/";
+        private static int GetFreePort()
+        {
+            var listener = new System.Net.Sockets.TcpListener(System.Net.IPAddress.Loopback, 0);
+            listener.Start();
+            int port = ((System.Net.IPEndPoint)listener.LocalEndpoint).Port;
+            TestContext.Progress.WriteLine($"Found free port for VAU server: {port}");
+            listener.Stop();
+
+            return port;
+        }
 
         [SetUp]
         public void Setup()
@@ -41,7 +51,7 @@ namespace lib_vau_csharp_test
             SignedPublicVauKeys signedPublicVauKeys = SignedPublicVauKeys.Sign(Constants.Certificates.ServerAutCertificate, Constants.Keys.ECPrivateKeyParameters, Constants.Certificates.OcspResponseAutCertificate, 1, vauBasicPublicKey);
 
             vauServer = new VauServer(url, signedPublicVauKeys, Constants.Keys.EccKyberKeyPair);
-            vauServer.StartAsync();
+            _ = vauServer.StartAsync();
 
         }
 

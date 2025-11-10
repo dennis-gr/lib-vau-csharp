@@ -49,7 +49,8 @@ namespace lib_vau_csharp
             byte versionByte = 2;
             byte puByte = (byte)(isPu ? 1 : 0);
             byte requestByte = GetRequestByte();
-            byte[] requestCounterBytes = BitConverter.GetBytes(GetRequestCounter()).Reverse().ToArray();
+            long requestCounter = GetRequestCounter();
+            byte[] requestCounterBytes = BitConverter.GetBytes(requestCounter).Reverse().ToArray();
             byte[][] headerBytes = new byte[][] { new byte[] { versionByte }, new byte[] { puByte }, new byte[] { requestByte }, requestCounterBytes, KeyId };
             byte[] header = Arrays.ConcatenateAll(headerBytes);
 
@@ -57,7 +58,7 @@ namespace lib_vau_csharp
             new SecureRandom().NextBytes(random);
 
             AesGcm aesGcm = new AesGcm();
-            aesGcm.initAESForEncryption(random, GetRequestCounter(), header, encryptionVauKey);
+            aesGcm.initAESForEncryption(random, requestCounter, header, encryptionVauKey);
             byte[] ciphertext = aesGcm.encryptData(plaintext);
             byte[][] concatBytes = new byte[][] { header, aesGcm.ivValue, ciphertext };
             byte[] bytes = Arrays.ConcatenateAll(concatBytes);

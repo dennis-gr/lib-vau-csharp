@@ -54,7 +54,7 @@ namespace lib_vau_csharp
                 }
 
                 switch (context.Request.Url.AbsolutePath)
-                { 
+                {
                     case "/VAU":
                         await AnswerHandshake(context);
                         break;

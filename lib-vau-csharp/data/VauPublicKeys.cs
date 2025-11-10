@@ -37,7 +37,7 @@ namespace lib_vau_csharp.data
         }
 
         [JsonConstructor]
-        public VauPublicKeys(VauEccPublicKey ecdhPublicKey,byte[] kyberPublicKeyBytes, string comment, int iat, int exp) : base(ecdhPublicKey, kyberPublicKeyBytes)
+        public VauPublicKeys(VauEccPublicKey ecdhPublicKey, byte[] kyberPublicKeyBytes, string comment, int iat, int exp) : base(ecdhPublicKey, kyberPublicKeyBytes)
         {
             Iat = iat;
             Exp = exp;
