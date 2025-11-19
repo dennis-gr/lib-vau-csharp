@@ -22,6 +22,7 @@ using lib_vau_csharp.util;
 using Org.BouncyCastle.Security;
 using System;
 using System.Linq;
+using System.Threading;
 
 namespace lib_vau_csharp
 {
@@ -34,7 +35,7 @@ namespace lib_vau_csharp
         private byte[] clientTranscript = Array.Empty<byte>();
         private readonly Kem kem = Kem.initializeKem(Kem.KemEngines.AesEngine, Kem.KEYSIZE_256);
         private KdfMessage clientKemResult1, clientKemResult2;
-        private long requestCounter { get; set; } = 0;
+        private long requestCounter;
 
         public VauClientStateMachine()
         {
@@ -145,10 +146,7 @@ namespace lib_vau_csharp
         /// <summary>
         /// Increments the request counter (A_24628-*) and returns the new value.
         /// </summary>
-        protected override long GetRequestCounter()
-        {
-            return requestCounter += 1;
-        }
+        protected override long GetRequestCounter() => Interlocked.Increment(ref requestCounter);
 
         /// <summary>
         /// Gets the current request counter value (e.g., for verification in unit tests).

@@ -22,37 +22,38 @@ using lib_vau_csharp.data;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace lib_vau_csharp_test
 {
     public class VauStateMachineTest
     {
         private SignedPublicVauKeys signedPublicVauKeys;
+        
+        private VauClientStateMachine client;
+        private VauServerStateMachine server;
 
         [SetUp]
         public void Setup()
         {
             VauPublicKeys vauBasicPublicKey = new VauPublicKeys(Constants.Keys.EccKyberKeyPair, "VAU Server Keys", TimeSpan.FromDays(30));
             signedPublicVauKeys = SignedPublicVauKeys.Sign(Constants.Certificates.ServerAutCertificate, Constants.Keys.ECPrivateKeyParameters, Constants.Certificates.OcspResponseAutCertificate, 1, vauBasicPublicKey);
+            
+            client = new VauClientStateMachine();
+            server = new VauServerStateMachine(signedPublicVauKeys, Constants.Keys.EccKyberKeyPair);
+
+            byte[] pMessage1 = client.generateMessage1();
+            byte[] pMessage2 = server.receiveMessage1(pMessage1);
+            byte[] pMessage3 = client.receiveMessage2(pMessage2);
+            byte[] pMessage4 = server.receiveMessage3(pMessage3);
+            client.receiveMessage4(pMessage4);
         }
 
         [Test]
         public void SimpleTest()
         {
-            VauClientStateMachine client;
-            VauServerStateMachine server;
-
             Assert.DoesNotThrow(() =>
             {
-                client = new VauClientStateMachine();
-                server = new VauServerStateMachine(signedPublicVauKeys, Constants.Keys.EccKyberKeyPair);
-
-                byte[] pMessage1 = client.generateMessage1();
-                byte[] pMessage2 = server.receiveMessage1(pMessage1);
-                byte[] pMessage3 = client.receiveMessage2(pMessage2);
-                byte[] pMessage4 = server.receiveMessage3(pMessage3);
-                client.receiveMessage4(pMessage4);
-
                 int messageCount = 3;
                 long before = client.RequestCounter;
                 for (int i = 0; i < messageCount; i++)
@@ -76,6 +77,23 @@ namespace lib_vau_csharp_test
                 long after = client.RequestCounter;
                 Assert.That((before + messageCount == after), $"Request counter should increment by {messageCount} after sending {messageCount} messages, but got {after}");
             });
+        }
+
+        [Test]
+        public async Task Incrementing_The_RequestCounter_Is_Thread_Safe()
+        {
+            const int requestCount = 75;
+            
+            var tasks = new Task[requestCount];
+            
+            for (int i = 0; i < requestCount; i++)
+            {
+                tasks[i] = Task.Run(() => client.EncryptVauMessage(Array.Empty<byte>()));
+            }
+            
+            await Task.WhenAll(tasks);
+            
+            Assert.That(client.RequestCounter, Is.EqualTo(requestCount));
         }
     }
 }
