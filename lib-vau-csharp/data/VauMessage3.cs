@@ -17,7 +17,7 @@
  */
 
 using lib_vau_csharp.util;
-using Newtonsoft.Json;
+
 using PeterO.Cbor;
 using System;
 
@@ -30,7 +30,6 @@ namespace lib_vau_csharp.data
         public byte[] AeadCt { get; private set; }
         public byte[] AeadCtKeyKonfirmation { get; private set; }
 
-        [JsonConstructor]
         public VauMessage3(byte[] aeadCt, byte[] aeadCtKeyKonfirmation)
         {
             AeadCt = aeadCt;
