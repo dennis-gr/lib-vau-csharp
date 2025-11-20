@@ -49,7 +49,7 @@ namespace lib_vau_csharp
             using var memoryStream = new MemoryStream(decryptedResponse);
             using var reader = new StreamReader(memoryStream);
 
-            int bytesRead = 0; //Keep track of the number of bytes read from the stream to read the content later, since not all responses contain a 'Content-Length-ä header which we could use otherwise 
+            int bytesRead = 0; //Keep track of the number of bytes read from the stream to read the content later, since not all responses contain a 'Content-Length' header which we could use otherwise 
             int i = 0;
 
             var contentHeaders = new Dictionary<string, string>();
