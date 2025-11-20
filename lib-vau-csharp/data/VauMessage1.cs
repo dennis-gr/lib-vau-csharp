@@ -17,7 +17,7 @@
  */
 
 using lib_vau_csharp.util;
-using Newtonsoft.Json;
+
 using PeterO.Cbor;
 using System;
 
@@ -26,7 +26,7 @@ namespace lib_vau_csharp.data
     public class VauMessage1 : VauBasicPublicKey
     {
         private const string _messageType = "M1";
-        [JsonProperty(nameof(MessageType))]
+
         public static string MessageType => _messageType;
 
         public VauMessage1(EccKyberKeyPair clientKey1) : base(clientKey1)

@@ -17,7 +17,7 @@
  */
 
 using lib_vau_csharp.util;
-using Newtonsoft.Json;
+
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Security;
@@ -37,7 +37,6 @@ namespace lib_vau_csharp.data
 
         const string DIGESTSIGNER = "SHA-256withECDSA";
 
-        [JsonConstructor]
         public SignedPublicVauKeys(byte[] signedPublicKeys, byte[] signatureEs256, byte[] certHash, int cdv, byte[] ocspResponse)
         {
             SignedPublicKeys = signedPublicKeys;
