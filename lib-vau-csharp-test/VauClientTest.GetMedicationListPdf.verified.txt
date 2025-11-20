@@ -29,12 +29,7 @@ eisung
 PZN Verordner abgebende
 Apotheke
 
-01.07.2024 22.07.2024 - 03953522
-Metoprolol-
-ratiopharm®
-100 mg
-Tabletten
-TAB 1-0-1 03953522 Dr. Max
+01.07.2024 22.07.2024 - 1-0-1 Dr. Max
 Manfred
 Mustermann
 Arztpraxis Dr.
@@ -73,7 +68,7 @@ Mustermann
 Arztpraxis Dr.
 Mustermann
 
-12.01.2024 16.02.2024
+12.01.2024 17.01.2024
 Doxorubicin
 85 mg
 Doxorubicin
@@ -87,7 +82,7 @@ Mustermann
 Arztpraxis Dr.
 Mustermann
 
-01.01.2024 17.01.2024 - 1-0-1 Dr. Max
+01.01.2024 16.02.2024 - 1-0-1 Dr. Max
 Manfred
 Mustermann
 Arztpraxis Dr.

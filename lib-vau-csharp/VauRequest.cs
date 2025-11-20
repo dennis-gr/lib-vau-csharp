@@ -46,12 +46,14 @@ namespace lib_vau_csharp
             {
                 payload = await httpRequestMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                 contentHeaders = String.Join(CrLf, httpRequestMessage.Content.Headers.Select(x => $"{x.Key}: {x.Value.First()}"));
+                if (contentHeaders.Length > 0)
+                    contentHeaders += CrLf;
             }
 
             string request = $"{httpRequestMessage.Method.Method} {uri.LocalPath} HTTP/{httpRequestMessage.Version}{CrLf}" +
                              $"{headers}{CrLf}" +
                              $"{contentHeaders}" +
-                             $"{CrLf}{CrLf}";
+                             $"{CrLf}";
 
             if (payload != null)
                 request += payload;
