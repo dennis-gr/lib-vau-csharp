@@ -1,4 +1,4 @@
-/* 
+/*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,7 +43,7 @@ namespace lib_vau_csharp
         {
             this.vauClientProvider = vauClientProvider ?? throw new ArgumentNullException(nameof(vauClientProvider));
 
-            AllowAutoRedirect = false; 
+            AllowAutoRedirect = false;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -58,7 +58,10 @@ namespace lib_vau_csharp
 
             var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-            await vauClient.DecryptResponse(response).ConfigureAwait(false);
+            if (response.IsSuccessStatusCode)
+            {
+                await vauClient.DecryptResponse(response).ConfigureAwait(false);
+            }
 
             return response;
         }
