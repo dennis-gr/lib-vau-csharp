@@ -55,6 +55,7 @@ namespace lib_vau_csharp
             await vauClient.EncryptRequest(request).ConfigureAwait(false);
 
             request.RequestUri = new Uri(request.RequestUri!.GetLeftPart(UriPartial.Authority) + vauClient.ConnectionId.Cid);
+            request.Headers.Remove("x-insurantid"); //A_25244
 
             var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
